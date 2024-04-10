@@ -91,9 +91,10 @@ async function loginUser(userData){
                 return status < 500;
             }
         });
-
+        console.log(userData);
         if (response.status === 200) {
-            alert(response.data.message)
+            localStorage.setItem('token', response.data.token);
+            window.location.href = `/userChats`;
         }else if(response.status === 400) {
             alert(response.data.message)
             throw new Error("Failed to log In:" + response.data.message);
