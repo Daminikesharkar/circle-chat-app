@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Circle Chat </title> 
+    <link rel="stylesheet" href="../public/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
+   </head>
+<body>
+  <nav>
+    <div class="menu">
+      <div class="logo">
+        <a href="#">CircleChat</a>
+      </div>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+  <div class="img"></div>
+  <div class="center">
+    <div class="title">Welcome to our circle chat</div>
+    <div class="sub_title">Where connections thrive!</div>
+    <div class="btns">
+      <button id="signin-form">Sign In</button>
+      <button id="signup-form">Sign Up</button>
+    </div>
+  </div>
+
+    <div id="login-popup" class="popup">
+      <div class="popup-content">
+          <span class="close-popup">×</span>
+          <h3>Login</h3>
+          <form id="login-form">
+              <input id="login-email" type="email" placeholder="Enter your email" required>
+              <input id="login-password" type="password" placeholder="Enter your password" required>
+              <div class="forgot-password">
+                  <a id="forget-password" href="#">Forgot Password?</a>
+              </div>
+              <button type="submit">Login</button>
+          </form>
+      </div>
+  </div>
+
+  <div id="signup-popup" class="popup">
+      <div class="popup-content">
+          <span class="close-popup">×</span>
+          <h3>Signup</h3>
+          <form id="signup-form">
+              <input id="signup-username" type="text" placeholder="Enter your name" required>
+              <input id="signup-email" type="email" placeholder="Enter your email" required>
+              <input id="signup-mobile" type="text" placeholder="Enter your Mobile number" required>
+              <input id="signup-password" type="password" placeholder="Enter your password" required>
+              <button type="submit">Sign Up</button>
+          </form>
+      </div>
+  </div>
+
+<script>
+    const signInButton = document.getElementById("signin-form");
+    const signUpButton = document.getElementById("signup-form");
+    const loginPopup = document.getElementById("login-popup");
+    const signupPopup = document.getElementById("signup-popup");
+
+
+    signInButton.addEventListener("click", ()=>{
+        loginPopup.style.display = "block";
+    });
+
+    signUpButton.addEventListener("click", ()=> {
+        signupPopup.style.display = "block";
+    });
+
+    document.querySelectorAll(".close-popup").forEach(function(closeButton) {
+        closeButton.addEventListener("click", function() {
+            this.closest(".popup").style.display = "none";
+        });
+    });
+
+    window.addEventListener("click", function(event) {
+        if (event.target.classList.contains("popup")) {
+            event.target.style.display = "none";
+        }
+    });
+</script>
+</body>
+</html>
