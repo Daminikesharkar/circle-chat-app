@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 require('dotenv').config();
 
 const sequelize = require('./util/database');
@@ -7,6 +8,11 @@ const sequelize = require('./util/database');
 const mainroutes = require('./routes/main');
 
 const app = express();
+
+app.use(cors({
+    origin: '*',
+    methods:['GET','POST'],  
+}));
 
 app.use(express.urlencoded({extended: false }));
 app.use(express.static(path.join(__dirname,'public')));
