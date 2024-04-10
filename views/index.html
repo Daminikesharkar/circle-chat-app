@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Circle Chat </title> 
-    <link rel="stylesheet" href="../public/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
    </head>
 <body>
@@ -26,8 +26,8 @@
     <div class="title">Welcome to our circle chat</div>
     <div class="sub_title">Where connections thrive!</div>
     <div class="btns">
-      <button id="signin-form">Sign In</button>
-      <button id="signup-form">Sign Up</button>
+      <button id="signin-form-btn">Sign In</button>
+      <button id="signup-form-btn">Sign Up</button>
     </div>
   </div>
 
@@ -60,32 +60,7 @@
       </div>
   </div>
 
-<script>
-    const signInButton = document.getElementById("signin-form");
-    const signUpButton = document.getElementById("signup-form");
-    const loginPopup = document.getElementById("login-popup");
-    const signupPopup = document.getElementById("signup-popup");
-
-
-    signInButton.addEventListener("click", ()=>{
-        loginPopup.style.display = "block";
-    });
-
-    signUpButton.addEventListener("click", ()=> {
-        signupPopup.style.display = "block";
-    });
-
-    document.querySelectorAll(".close-popup").forEach(function(closeButton) {
-        closeButton.addEventListener("click", function() {
-            this.closest(".popup").style.display = "none";
-        });
-    });
-
-    window.addEventListener("click", function(event) {
-        if (event.target.classList.contains("popup")) {
-            event.target.style.display = "none";
-        }
-    });
-</script>
+  <script type="module" src="js/script.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
 </body>
 </html>

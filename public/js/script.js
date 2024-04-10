@@ -1,28 +1,67 @@
-const signInButton = document.getElementById('signin-form');
-const signUpButton = document.getElementById('signup-form');
+const signInButton = document.getElementById("signin-form-btn");
+const signUpButton = document.getElementById("signup-form-btn");
+const loginPopup = document.getElementById("login-popup");
+const signupPopup = document.getElementById("signup-popup");
 
-const signInPopup = document.getElementById('signin-popup');
-const signUpPopup = document.getElementById('signup-popup');
+signInButton.addEventListener("click", ()=>{
+    loginPopup.style.display = "block";
+});
 
-const closeButtons = document.querySelectorAll('.popup .close');
+signUpButton.addEventListener("click", ()=> {
+    signupPopup.style.display = "block";
+});
 
-function showPopup(popup) {
-  popup.style.display = 'block';
+document.querySelectorAll(".close-popup").forEach(function(closeButton) {
+    closeButton.addEventListener("click", function() {
+        this.closest(".popup").style.display = "none";
+    });
+});
+
+window.addEventListener("click", function(event) {
+    if (event.target.classList.contains("popup")) {
+        event.target.style.display = "none";
+    }
+});
+
+const signupName = document.getElementById('signup-username');
+const signupEmail = document.getElementById('signup-email');
+const signupMobile = document.getElementById('signup-mobile');
+const signupPassword = document.getElementById('signup-password');
+
+const signupForm = document.getElementById('signup-form');
+
+signupForm.addEventListener('submit',(e)=>{
+    e.preventDefault();
+
+    const userData = {
+        username:signupName.value,
+        email:signupEmail.value,
+        mobilenumber:signupMobile.value,
+        password:signupPassword.value
+    }
+
+    postUser(userData);
+    signupForm.reset();
+})
+
+async function postUser(userData){
+    try {
+        const response = await axios.post('/addUser',userData,{
+            validateStatus: function (status) {
+                return status < 500;
+            }
+        });
+        if (response.status === 200) {
+            alert("Signed Up successfully, please login now!");
+            window.location.href = `/`;
+        }else if(response.status === 400) {
+            alert(response.data.message);
+            throw new Error("User already exists with this email" + response.status);
+        }else {
+            alert(response.data.message)
+            throw new Error("Failed to add user" + response.status);
+        }    
+    } catch (error) {
+        console.error("Error adding User", error.message);
+    }
 }
-function hidePopup(popup) {
-  popup.style.display = 'none';
-}
-signInButton.addEventListener('click', () => {
-  showPopup(signInPopup);
-});
-
-signUpButton.addEventListener('click', () => {
-  showPopup(signUpPopup);
-});
-
-closeButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    const popup = button.parentElement.parentElement;
-    hidePopup(popup);
-  });
-});
