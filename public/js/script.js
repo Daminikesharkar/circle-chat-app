@@ -23,6 +23,7 @@ window.addEventListener("click", function(event) {
     }
 });
 
+//sign up
 const signupName = document.getElementById('signup-username');
 const signupEmail = document.getElementById('signup-email');
 const signupMobile = document.getElementById('signup-mobile');
@@ -61,6 +62,46 @@ async function postUser(userData){
             alert(response.data.message)
             throw new Error("Failed to add user" + response.status);
         }    
+    } catch (error) {
+        console.error("Error adding User", error.message);
+    }
+}
+
+//login 
+const loginEmail = document.getElementById('login-email');
+const loginPassword = document.getElementById('login-password'); 
+
+const loginForm = document.getElementById('login-form');
+
+loginForm.addEventListener('submit',(e)=>{
+    e.preventDefault();
+    const userData = {
+        email:loginEmail.value,
+        password:loginPassword.value
+    }
+
+    loginUser(userData);
+    loginForm.reset();
+})
+
+async function loginUser(userData){
+    try {
+        const response = await axios.post('/login', userData, {
+            validateStatus: function (status) {
+                return status < 500;
+            }
+        });
+
+        if (response.status === 200) {
+            alert(response.data.message)
+        }else if(response.status === 400) {
+            alert(response.data.message)
+            throw new Error("Failed to log In:" + response.data.message);
+        }else if(response.status === 401) {
+            alert(response.data.message)
+            throw new Error("Failed to log In:" + response.data.message);
+        }
+        
     } catch (error) {
         console.error("Error adding User", error.message);
     }
