@@ -29,3 +29,23 @@ async function postMessage(chatData){
         console.error("Error adding chats", error.message);
     }
 }
+
+async function displayChats(){
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('/getMessages',{headers:{"Authorization":token}});
+
+        const length = Object.keys(response.data.chats).length;
+        for(let i=0;i<length;i++){
+            const message = response.data.chats[i].message;
+            addMessage(message);
+        }
+
+    } catch (error) {
+        console.error("Error fetching chats", error.message);
+    }
+}
+
+window.addEventListener('load',()=>{
+    displayChats();
+})

@@ -22,3 +22,20 @@ exports.saveChats = async (req,res)=>{
         }); 
     }
 }
+
+exports.getChats = async (req,res)=>{
+    try {
+        const user = req.user;
+        const chats = await Chats.findAll({where:{userId:user.id}});
+
+        return res.status(200).json({
+            message: 'Chats fetched successfully',
+            chats: chats
+        });
+        
+    } catch (error) {
+        res.status(500).json({
+            error: 'Internal Server Error'
+        }); 
+    }
+}
