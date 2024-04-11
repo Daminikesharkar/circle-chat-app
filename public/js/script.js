@@ -91,7 +91,6 @@ async function loginUser(userData){
                 return status < 500;
             }
         });
-        console.log(userData);
         if (response.status === 200) {
             localStorage.setItem('token', response.data.token);
             window.location.href = `/userChats`;

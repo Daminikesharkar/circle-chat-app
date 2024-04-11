@@ -11,10 +11,21 @@ function addMessage(message) {
     messageContainer.scrollTop = messageContainer.scrollHeight;
 }
 
-sendButton.addEventListener("click", function() {
-const message = messageInput.value.trim(); 
-if (message !== "") { 
-    addMessage(message); 
-    messageInput.value = ""; 
+sendButton.addEventListener('click',()=>{
+    const chatData = {
+        message:messageInput.value
+    }
+    postMessage(chatData);
+    addMessage(chatData.message);
+    messageInput.value = "";
+})
+
+async function postMessage(chatData){
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.post('/postMessage',chatData,{headers:{"Authorization":token}});
+
+    } catch (error) {
+        console.error("Error adding chats", error.message);
+    }
 }
-});

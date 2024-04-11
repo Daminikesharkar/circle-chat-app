@@ -4,6 +4,8 @@ const cors = require('cors');
 require('dotenv').config();
 
 const sequelize = require('./util/database');
+const Users = require('./models/user');
+const Chats = require('./models/chats');
 
 const mainroutes = require('./routes/main');
 const userChatsroutes = require('./routes/userChats');
@@ -22,8 +24,11 @@ app.use(express.json());
 app.use(mainroutes);
 app.use(userChatsroutes);
 
-// sequelize.sync({ alter: true });
-sequelize.sync();
+Users.hasMany(Chats)
+Chats.belongsTo(Users, { constraints: true });
+
+sequelize.sync({ alter: true });
+// sequelize.sync();
 
 app.listen(process.env.Port || 3000,()=>{
     console.log(`server is live on port ${process.env.Port}`);
