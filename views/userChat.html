@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <title> Circle Chat </title> 
+    <link rel="stylesheet" href="css/userChat.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo_item">
+        <img src="images/logo.jpg" alt=""></i>CircleChat
+      </div>
+
+      <div id="active_group" class="groups">
+        <div class="group_info">
+          <span class="group_name">Common Group</span>
+          <i class="bx bx-edit"></i>
+          <i class="bx bx-show"></i>
+        </div>
+      </div>
+
+      <div class="navbar_content">
+        <img src="images/user.avif" alt="" class="profile" />
+      </div>
+    </nav>
+
+    <nav class="sidebar">
+      <div class="menu_content">
+
+        <ul class="menu_items">
+          <div class="menu_title menu_profile"></div>
+          <hr>
+          <br>
+          <li class="item">
+            <div href="#" class="nav_link submenu_item">
+              <span class="navlink_icon">
+                <i class="bx bx-home-alt"></i>
+              </span>
+              <span class="navlink">Profile</span>
+              <i class="bx bx-chevron-right arrow-left"></i>
+            </div>
+          </li>
+          <li class="item">
+            <div href="#" class="nav_link submenu_item">
+              <span class="navlink_icon">
+                <i class='bx bx-plus-circle'></i>
+              </span>
+              <span class="navlink">Create Group</span>
+              <i class="bx bx-chevron-right arrow-left"></i>
+            </div>
+          </li>
+        </ul>
+
+        <ul class="menu_items">          
+          <div class="menu_title menu_group"></div>
+          <hr>
+          <br>
+          <li class="item">
+            <a href="#" class="nav_link">
+              <div class="group_info">
+                <img src="images/background.jpg" alt="Group Profile Image" class="group_profile_image">
+                <span class="group_name">Common Group</span>
+              </div>
+            </a>
+          </li>
+          <li class="item">
+            <a href="#" class="nav_link">
+              <div class="group_info">
+                <img src="images/background.jpg" alt="Group Profile Image" class="group_profile_image">
+                <span class="group_name">Group A</span>
+              </div>
+            </a>
+          </li>
+          <li class="item">
+            <a href="#" class="nav_link">
+              <div class="group_info">
+                <img src="images/user.avif" alt="Group Profile Image" class="group_profile_image">
+                <span class="group_name">Group B</span>
+              </div>
+            </a>
+          </li>
+          <li class="item">
+            <a href="#" class="nav_link">
+              <div class="group_info">
+                <img src="images/background.jpg" alt="Group Profile Image" class="group_profile_image">
+                <span class="group_name">Group C</span>
+              </div>
+            </a>
+          </li>
+        </ul>
+
+      </div>
+    </nav>    
+
+    <div class="message_input_container">
+        <i class="bx bx-image send_icon"></i>
+        <input type="text" class="message_input" placeholder="Type your message here..." />
+        <button class="send_button">
+          <i class="bx bx-paper-plane"></i>
+        </button>
+    </div>
+    <div id="messageContainer" class="message_container"></div>
+
+    <script src="js/userChat.js"></script>
+  </body>
+</html>
