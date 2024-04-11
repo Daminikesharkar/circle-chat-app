@@ -48,4 +48,5 @@ async function displayChats(){
 
 window.addEventListener('load',()=>{
     displayChats();
+    setInterval(displayChats, 5000);
 })
