@@ -1,4 +1,6 @@
 const Chats = require('../models/chats');
+const Users = require('../models/user');
+const { Op } = require('sequelize');
 
 exports.getUserChatPage = (req, res) => {
     res.sendFile('userChat.html', { root: 'views' });
@@ -31,6 +33,29 @@ exports.getChats = async (req,res)=>{
         return res.status(200).json({
             message: 'Chats fetched successfully',
             chats: chats
+        });
+        
+    } catch (error) {
+        res.status(500).json({
+            error: 'Internal Server Error'
+        }); 
+    }
+}
+
+exports.getUsers = async (req,res)=>{
+    try {
+        const currentUser = req.user;
+        const users = await Users.findAll({
+            attributes: ['id', 'username'],
+            where: {
+                id: {
+                    [Op.not]: currentUser.id 
+                }
+            }
+        });
+        return res.status(200).json({
+            message: 'Users fetched successfully',
+            users: users
         });
         
     } catch (error) {

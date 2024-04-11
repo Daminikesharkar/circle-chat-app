@@ -46,7 +46,91 @@ async function displayChats(){
     }
 }
 
+//create groups
+const createGroup = document.getElementById('create_group_btn');
+
+createGroup.addEventListener('click',()=>{
+    document.getElementById('createGroupPopup').style.display = 'block';
+    displayAllUsers();
+})
+  
+document.querySelector('.close-btn').addEventListener('click', function() {
+    document.getElementById('createGroupPopup').style.display = 'none';
+});
+
+async function displayAllUsers() {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('/getAllUsers', { headers: { "Authorization": token } });
+
+        const allUsers = response.data.users;
+        const allUserListElement = document.getElementById('allUserList');
+        allUserListElement.innerHTML = '';
+
+        allUsers.forEach((user, index) => {
+            const userDiv = createUserElement(user, index + 1, false);
+            allUserListElement.appendChild(userDiv);
+        });
+
+    } catch (error) {
+        console.error("Error fetching Users", error.message);
+    }
+}
+
+function createUserElement(user, index, added) {
+    const userDiv = document.createElement('div');
+    userDiv.classList.add('user');
+    const userSpan = document.createElement('span');
+    userSpan.textContent = `${index}. ${user.username}`;
+    userDiv.appendChild(userSpan);
+
+    const btnText = added ? 'Remove' : 'Add';
+    const addRemoveBtn = document.createElement('button');
+    addRemoveBtn.textContent = btnText;
+    addRemoveBtn.classList.add('add-remove-btn');
+    addRemoveBtn.addEventListener('click', () => {
+        if (added) {
+            userDiv.remove();
+            const originalUserDiv = userDiv.originalUserDiv;
+
+            const addRemoveBtn = createUserButton(originalUserDiv, user, false);
+            originalUserDiv.appendChild(addRemoveBtn);
+        } else {
+            const addedUserListElement = document.getElementById('addedUserList');
+            const addedUserDiv = createUserElement(user, '', true);
+            addedUserListElement.appendChild(addedUserDiv);
+
+            addedUserDiv.originalUserDiv = userDiv;
+            addRemoveBtn.remove();
+        }
+    });
+    userDiv.appendChild(addRemoveBtn);
+    return userDiv;
+}
+
+function createUserButton(userDiv, user, added) {
+    const addRemoveBtn = document.createElement('button');
+    addRemoveBtn.textContent = added ? 'Remove' : 'Add';
+    addRemoveBtn.classList.add('add-remove-btn');
+    addRemoveBtn.addEventListener('click', () => {
+        if (added) {
+            userDiv.remove();
+            const originalUserDiv = userDiv.originalUserDiv;
+
+            const addRemoveBtn = createUserButton(originalUserDiv, user, false);
+            originalUserDiv.appendChild(addRemoveBtn);
+        } else {
+            const addedUserListElement = document.getElementById('addedUserList');
+            const addedUserDiv = createUserElement(user, '', true);
+            addedUserListElement.appendChild(addedUserDiv);
+
+            addedUserDiv.originalUserDiv = userDiv;
+            addRemoveBtn.remove();
+        }
+    });
+    return addRemoveBtn;
+}
+
 window.addEventListener('load',()=>{
     displayChats();
-    setInterval(displayChats, 5000);
 })

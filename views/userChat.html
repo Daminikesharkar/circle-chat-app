@@ -42,7 +42,7 @@
               <i class="bx bx-chevron-right arrow-left"></i>
             </div>
           </li>
-          <li class="item">
+          <li class="item" id="create_group_btn">
             <div href="#" class="nav_link submenu_item">
               <span class="navlink_icon">
                 <i class='bx bx-plus-circle'></i>
@@ -102,6 +102,27 @@
         </button>
     </div>
     <div id="messageContainer" class="message_container"></div>
+
+    <div class="popup" id="createGroupPopup">
+      <div class="popup-content">
+        <span class="close-btn">&times;</span>
+        <h3>Select Users for New Group</h3>
+        <div class="section">
+          <h4>All Users</h4>
+          <div id="allUserList" class="user-list">
+            
+          </div>
+        </div>
+        <div class="section">
+          <h4>Added Users</h4>
+          <div id="addedUserList" class="user-list">
+            
+          </div>
+        </div>
+        <button class="create-group-btn">Create Group</button>
+      </div>
+    </div>
+    
 
     <script type="module" src="js/userChat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
