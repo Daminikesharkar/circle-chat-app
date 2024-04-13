@@ -106,13 +106,16 @@
     <div class="popup" id="createGroupPopup">
       <div class="popup-content">
         <span class="close-btn">&times;</span>
-        <h3>Select Users for New Group</h3>
+        <div class="input-group">
+          <input type="text" id="groupName" placeholder="Give your group a name..." required/>
+        </div>
         <div class="section">
           <h4>All Users</h4>
           <div id="allUserList" class="user-list">
             
           </div>
         </div>
+        <hr>
         <div class="section">
           <h4>Added Users</h4>
           <div id="addedUserList" class="user-list">

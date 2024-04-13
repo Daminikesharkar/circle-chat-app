@@ -131,6 +131,18 @@ function createUserButton(userDiv, user, added) {
     return addRemoveBtn;
 }
 
+const groupNameInput = document.getElementById('groupName');
+const createGroupBtn = document.querySelector('.create-group-btn');
+
+groupNameInput.addEventListener('input', () => {
+  if (groupNameInput.value.trim() !== '') {
+    createGroupBtn.removeAttribute('disabled');
+  } else {
+    createGroupBtn.setAttribute('disabled', true);
+  }
+});
+
+
 window.addEventListener('load',()=>{
     displayChats();
 })
