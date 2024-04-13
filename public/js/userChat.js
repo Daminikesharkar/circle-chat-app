@@ -168,7 +168,7 @@ createGroupBtn.addEventListener('click',async ()=>{
 function addGroupInUi(group){
     const groupListItem = document.createElement('li');
     groupListItem.classList.add('item');
-    groupListItem.dataset.group = group; 
+    groupListItem.dataset.group = JSON.stringify(group); 
 
     const groupLink = document.createElement('a');
     groupLink.href = '#';
@@ -196,6 +196,61 @@ function addGroupInUi(group){
 
     document.getElementById('createGroupPopup').style.display = 'none';
 }
+
+
+const groupsMenu = document.getElementById('groups');
+groupsMenu.addEventListener('click', (event) => {
+    const clickedElement = event.target;
+    if (clickedElement.classList.contains('nav_link') || clickedElement.classList.contains('group_name')) {
+        const groupListItem = clickedElement.closest('.item');
+        if (groupListItem) {
+            const groupData = groupListItem.dataset.group;
+            const group = JSON.parse(groupData);
+            openGroup(group);
+        }
+    }
+});
+
+async function openGroup(group){
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`/checkAdmin?groupId=${group.id}`, { headers: { "Authorization": token } });
+        const isAdmin = response.data.isAdmin;
+
+        const activeGroup = document.getElementById('active_group');
+        const groupInfo = activeGroup.querySelector('.group_info');
+        const groupName = groupInfo.querySelector('.group_name');
+        const editIcon = groupInfo.querySelector('.bx-edit');
+
+        groupName.textContent = group.name;
+
+        if (isAdmin) {
+            editIcon.style.display = 'block'; 
+        } else {
+            editIcon.style.display = 'none'; 
+        }
+
+        activeGroup.style.display = 'block';         
+    } catch (error) {
+        console.error("Failed to open groups", error.message);
+    }
+}
+
+async function displayUserGroups(){
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('/getUserGroups', { headers: { "Authorization": token } });
+        const userGroups = response.data.groups;
+    
+        userGroups.forEach(group => {
+            addGroupInUi(group);
+        });       
+    } catch (error) {
+        console.error("Error getting user groups", error.message);
+    }
+}
+
 window.addEventListener('load',()=>{
-    displayChats();
+    // displayChats();
+    displayUserGroups();
 })

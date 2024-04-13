@@ -95,3 +95,51 @@ exports.createGroup = async (req,res)=>{
         }); 
     }
 }
+
+exports.getUserGroups = async(req,res)=>{
+    const user = req.user
+
+    try {   
+        console.log('in'); 
+        const groupIds = await Members.findAll({
+            where: { UserId: user.id },
+            attributes: ['groupId']
+        });
+        const ids = groupIds.map(({ groupId }) => groupId);
+
+        const userGroups = await Group.findAll({
+            where: { id: ids }
+        });
+
+        if (userGroups.length > 0) {
+            return res.status(200).json({ groups: userGroups });
+        } else {
+            return res.status(404).json({ message: 'No groups found for the current user' });
+        }
+    } catch (error) {
+        res.status(500).json({
+            error: 'Internal Server Error'
+        }); 
+    }
+}
+
+exports.checkAdmin = async (req,res)=>{
+    const { groupId } = req.query;
+    const user = req.user; 
+
+    try {
+        const isAdmin = await Members.findOne({
+            where: {
+                userId: user.id,
+                groupId: groupId,
+                admin: true 
+            }
+        });        
+        res.status(200).json({ isAdmin: !!isAdmin });  
+              
+    } catch (error) {
+        res.status(500).json({
+            error: 'Internal Server Error'
+        });
+    }
+}
