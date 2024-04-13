@@ -10,4 +10,6 @@ router.post('/postMessage',authentication.authenticate,userChatsController.saveC
 router.get('/getMessages',authentication.authenticate,userChatsController.getChats);
 router.get('/getAllUsers',authentication.authenticate,userChatsController.getUsers);
 
+router.post('/createGroup',authentication.authenticate,userChatsController.createGroup);
+
 module.exports = router;

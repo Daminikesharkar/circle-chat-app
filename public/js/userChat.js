@@ -80,6 +80,7 @@ async function displayAllUsers() {
 function createUserElement(user, index, added) {
     const userDiv = document.createElement('div');
     userDiv.classList.add('user');
+    userDiv.dataset.user = JSON.stringify(user);
     const userSpan = document.createElement('span');
     userSpan.textContent = `${index}. ${user.username}`;
     userDiv.appendChild(userSpan);
@@ -142,7 +143,59 @@ groupNameInput.addEventListener('input', () => {
   }
 });
 
+createGroupBtn.addEventListener('click',async ()=>{
+    const groupName = groupNameInput.value.trim();
 
+    const selectedUsers = document.querySelectorAll('#addedUserList .user');
+    const users = Array.from(selectedUsers).map(user => JSON.parse(user.dataset.user));
+
+    const userIds = users.map(user => user.id);
+    const data = {
+        groupname : groupName,
+        userIds:userIds
+    }
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.post('/createGroup',data, { headers: { "Authorization": token } });
+        const group = response.data.group;
+
+        addGroupInUi(group);
+    } catch (error) {
+        console.error("Error creating group", error.message);
+    }
+})
+
+function addGroupInUi(group){
+    const groupListItem = document.createElement('li');
+    groupListItem.classList.add('item');
+    groupListItem.dataset.group = group; 
+
+    const groupLink = document.createElement('a');
+    groupLink.href = '#';
+    groupLink.classList.add('nav_link');
+
+    const groupInfo = document.createElement('div');
+    groupInfo.classList.add('group_info');
+
+    const groupProfileImage = document.createElement('img');
+    groupProfileImage.src = 'images/user.avif'; 
+    groupProfileImage.alt = 'Group Profile Image';
+    groupProfileImage.classList.add('group_profile_image');
+
+    const groupNameSpan = document.createElement('span');
+    groupNameSpan.classList.add('group_name');
+    groupNameSpan.textContent = group.name;
+
+    groupInfo.appendChild(groupProfileImage);
+    groupInfo.appendChild(groupNameSpan);
+    groupLink.appendChild(groupInfo);
+    groupListItem.appendChild(groupLink);
+
+    const groupsMenu = document.getElementById('groups');
+    groupsMenu.appendChild(groupListItem);
+
+    document.getElementById('createGroupPopup').style.display = 'none';
+}
 window.addEventListener('load',()=>{
     displayChats();
 })
