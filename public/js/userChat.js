@@ -2,21 +2,37 @@ const messageContainer = document.getElementById("messageContainer");
 const messageInput = document.querySelector(".message_input");
 const sendButton = document.querySelector(".send_button");
 
-function addMessage(message) {
-    const messageElement = document.createElement("div");
-    messageElement.classList.add("message");
-    messageElement.innerText = message;
-    
-    messageContainer.insertBefore(messageElement, messageContainer.firstChild);
+function addMessage(chat) {
+
+    const chatElement = document.createElement("div");
+
+    if (chat.isCurrentUser) {
+        chatElement.classList.add("message-right");
+    } else {
+        chatElement.classList.add("message-left");
+    }
+
+    const messageContent = `
+        <div class="username">${chat.username}</div>
+        <div class="chat">${chat.message}</div>
+        <div class="created-at">${chat.createdAt}</div>
+    `;
+
+    chatElement.innerHTML = messageContent;
+
+    messageContainer.insertBefore(chatElement, messageContainer.firstChild);
     messageContainer.scrollTop = messageContainer.scrollHeight;
 }
 
 sendButton.addEventListener('click',()=>{
+    const messageInputBox = document.querySelector('.message_input_container'); 
+    const groupId = messageInputBox.dataset.groupId;
+    
     const chatData = {
-        message:messageInput.value
+        message:messageInput.value,
+        groupId:groupId
     }
     postMessage(chatData);
-    addMessage(chatData.message);
     messageInput.value = "";
 })
 
@@ -24,21 +40,23 @@ async function postMessage(chatData){
     try {
         const token = localStorage.getItem('token');
         const response = await axios.post('/postMessage',chatData,{headers:{"Authorization":token}});
-
+        addMessage(response.data.chat);
     } catch (error) {
         console.error("Error adding chats", error.message);
     }
 }
 
-async function displayChats(){
+async function displayChats(group){
     try {
+        messageContainer.innerHTML = '';
         const token = localStorage.getItem('token');
-        const response = await axios.get('/getMessages',{headers:{"Authorization":token}});
+        const response = await axios.get(`/getGroupMessages?groupId=${group.id}`,{headers:{"Authorization":token}});
 
         const length = Object.keys(response.data.chats).length;
         for(let i=0;i<length;i++){
-            const message = response.data.chats[i].message;
-            addMessage(message);
+            const chat = response.data.chats[i];
+            console.log(chat);
+            addMessage(chat);
         }
 
     } catch (error) {
@@ -197,13 +215,20 @@ function addGroupInUi(group){
     document.getElementById('createGroupPopup').style.display = 'none';
 }
 
-
+//open particular group
 const groupsMenu = document.getElementById('groups');
 groupsMenu.addEventListener('click', (event) => {
     const clickedElement = event.target;
     if (clickedElement.classList.contains('nav_link') || clickedElement.classList.contains('group_name')) {
         const groupListItem = clickedElement.closest('.item');
         if (groupListItem) {
+
+            const allGroupItems = document.querySelectorAll('#groups .item');
+            allGroupItems.forEach(item => {
+                item.classList.remove('selected');
+            });
+            groupListItem.classList.add('selected');
+
             const groupData = groupListItem.dataset.group;
             const group = JSON.parse(groupData);
             openGroup(group);
@@ -218,24 +243,32 @@ async function openGroup(group){
         const isAdmin = response.data.isAdmin;
 
         const activeGroup = document.getElementById('active_group');
+        const messageInputBox = document.querySelector('.message_input_container'); 
+        const messageContainer = document.getElementById('messageContainer'); 
+
         const groupInfo = activeGroup.querySelector('.group_info');
         const groupName = groupInfo.querySelector('.group_name');
         const editIcon = groupInfo.querySelector('.bx-edit');
 
         groupName.textContent = group.name;
+        messageInputBox.dataset.groupId = group.id;
 
         if (isAdmin) {
             editIcon.style.display = 'block'; 
         } else {
             editIcon.style.display = 'none'; 
         }
-
-        activeGroup.style.display = 'block';         
+        activeGroup.style.display = 'block'; 
+        messageInputBox.style.display = 'flex'; 
+        messageContainer.style.display = 'flex';         
+        displayChats(group);
+        
     } catch (error) {
         console.error("Failed to open groups", error.message);
     }
 }
 
+//display all users groups
 async function displayUserGroups(){
     try {
         const token = localStorage.getItem('token');

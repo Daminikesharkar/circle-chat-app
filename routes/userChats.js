@@ -13,5 +13,6 @@ router.get('/getAllUsers',authentication.authenticate,userChatsController.getUse
 router.post('/createGroup',authentication.authenticate,userChatsController.createGroup);
 router.get('/getUserGroups',authentication.authenticate,userChatsController.getUserGroups);
 router.get('/checkAdmin',authentication.authenticate,userChatsController.checkAdmin);
+router.get('/getGroupMessages',authentication.authenticate,userChatsController.getGroupChats);
 
 module.exports = router;

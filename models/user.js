@@ -18,7 +18,6 @@ const Users = sequelize.define('users',{
     },
     mobilenumber:{
         type: Sequelize.BIGINT(10),
-        unique: true,
         allowNull: false
     },
     password:{

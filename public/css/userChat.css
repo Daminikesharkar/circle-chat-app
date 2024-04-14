@@ -202,12 +202,51 @@ body {
   background-color: #704264; 
   border-radius: 10px; 
 }
-.message {
-  align-self: flex-end; 
-  margin-bottom: 10px; 
-  background-color: #ffffff; 
-  padding: 15px;
+.selected {
+  color: white;
+  background: #704264;
+  border-radius: 5px;  
+}
+.message-right{
+  align-self: flex-end;
+  margin-bottom: 10px;
+  background-color: #ffffff;
+  padding: 5px 10px; 
   border-radius: 5px;
+  max-width: 70%; 
+  min-width: 200px;
+}
+.message-left{
+  align-self: flex-start;
+  margin-bottom: 10px;
+  background-color: #ffffff;
+  padding: 5px 10px; 
+  border-radius: 5px;
+  max-width: 70%; 
+  min-width: 200px;
+}
+.username {
+  font-size: 9px;
+  color: #704264;
+  text-decoration: underline;
+}
+.chat {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 5px;
+  font-weight: bold;   
+}
+.created-at {
+  font-size: 8px;
+  color: #313131;
+}
+.current-user {
+  align-self: flex-end;
+  background-color: #c4def6; 
+}
+.other-user {
+  align-self: flex-start;
+  background-color: #f0f0f0; 
 }
 .group_info {
   display: flex;

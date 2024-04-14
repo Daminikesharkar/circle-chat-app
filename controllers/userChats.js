@@ -9,15 +9,25 @@ exports.getUserChatPage = (req, res) => {
 };
 
 exports.saveChats = async (req,res)=>{
-    const {message} = req.body;
+    const {message,groupId} = req.body;
     const user = req.user;
     try {
-        await Chats.create({
+        const chat = await Chats.create({
             message:message,
-            userId:user.id
+            userId:user.id,
+            groupId:groupId
        })
-       return response.status(200).json({ 
-            message: "Message saved" 
+       const responseObj = {
+            message: chat.message,
+            createdAt: chat.createdAt,
+            userId: chat.userId,
+            username: user.username,
+            isCurrentUser:true
+        };
+
+        return res.status(200).json({ 
+            message: "Message saved" ,
+            chat:responseObj
         })
 
     } catch (error) {
@@ -26,7 +36,43 @@ exports.saveChats = async (req,res)=>{
         }); 
     }
 }
+exports.getGroupChats = async (req,res)=>{
+    const {groupId} = req.query;
+    try {
+        
+        const groupChats = await Chats.findAll({
+            where: { groupId: groupId },
+            attributes: ['message', 'createdAt','userId'],
+            include: [{
+                model: Users,
+                attributes: ['username'] 
+            }]
+        });
 
+        const chats = groupChats.map(chat => {
+            const user = chat.user; 
+            const username = user ? user.username : null; 
+            const isCurrentUser = chat.userId === req.user.id;
+            return {
+                message: chat.message,
+                createdAt: chat.createdAt,
+                userId: chat.userId,
+                username: username,
+                isCurrentUser:isCurrentUser
+            };
+        });
+
+        return res.status(200).json({
+            message: 'Chats fetched successfully',
+            chats: chats
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            error: 'Internal Server Error'
+        }); 
+    }
+}
 exports.getChats = async (req,res)=>{
     try {
         const user = req.user;
