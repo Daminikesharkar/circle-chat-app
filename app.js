@@ -1,4 +1,7 @@
 const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+
 const path = require('path');
 const cors = require('cors');
 require('dotenv').config();
@@ -35,9 +38,20 @@ Groups.belongsToMany(Users, { through: Members });
 Groups.hasMany(Chats);
 Chats.belongsTo(Groups);
 
+const server = http.createServer(app); 
+const io = new Server(server);
+
+io.on('connection', (socket) => {
+    console.log('A socket(client) connected');
+
+    socket.on('new-group-message', (groupId)=> {
+        socket.broadcast.emit('group-message',groupId);
+    });
+});
+
 // sequelize.sync({ alter: true });
 sequelize.sync();
 
-app.listen(process.env.Port || 3000,()=>{
-    console.log(`server is live on port ${process.env.Port}`);
-})
+server.listen(process.env.Port, () => {
+    console.log(`Server is live on port ${process.env.Port}`);
+});

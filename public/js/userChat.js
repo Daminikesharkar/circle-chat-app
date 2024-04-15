@@ -1,9 +1,17 @@
+import * as adminFunctions from './admin.js';
+const socket = io(window.location.origin);
+
+socket.on('group-message', (groupId) => { 
+    if(document.querySelector('.message_input_container').dataset.groupId === groupId) {
+        displayChats(groupId)
+    }    
+})
+
 const messageContainer = document.getElementById("messageContainer");
 const messageInput = document.querySelector(".message_input");
 const sendButton = document.querySelector(".send_button");
 
 function addMessage(chat) {
-
     const chatElement = document.createElement("div");
 
     if (chat.isCurrentUser) {
@@ -11,13 +19,11 @@ function addMessage(chat) {
     } else {
         chatElement.classList.add("message-left");
     }
-
     const messageContent = `
         <div class="username">${chat.username}</div>
         <div class="chat">${chat.message}</div>
         <div class="created-at">${chat.createdAt}</div>
     `;
-
     chatElement.innerHTML = messageContent;
 
     messageContainer.insertBefore(chatElement, messageContainer.firstChild);
@@ -34,6 +40,8 @@ sendButton.addEventListener('click',()=>{
     }
     postMessage(chatData);
     messageInput.value = "";
+
+    socket.emit('new-group-message', groupId);
 })
 
 async function postMessage(chatData){
@@ -46,16 +54,15 @@ async function postMessage(chatData){
     }
 }
 
-async function displayChats(group){
+async function displayChats(groupId){
     try {
         messageContainer.innerHTML = '';
         const token = localStorage.getItem('token');
-        const response = await axios.get(`/getGroupMessages?groupId=${group.id}`,{headers:{"Authorization":token}});
+        const response = await axios.get(`/getGroupMessages?groupId=${groupId}`,{headers:{"Authorization":token}});
 
         const length = Object.keys(response.data.chats).length;
         for(let i=0;i<length;i++){
             const chat = response.data.chats[i];
-            console.log(chat);
             addMessage(chat);
         }
 
@@ -261,8 +268,13 @@ async function openGroup(group){
         activeGroup.style.display = 'block'; 
         messageInputBox.style.display = 'flex'; 
         messageContainer.style.display = 'flex';         
-        displayChats(group);
-        
+
+        editIcon.addEventListener('click', () => {
+            adminFunctions.adminFunctionality(group);
+        });
+
+        displayChats(group.id);
+
     } catch (error) {
         console.error("Failed to open groups", error.message);
     }
@@ -284,6 +296,5 @@ async function displayUserGroups(){
 }
 
 window.addEventListener('load',()=>{
-    // displayChats();
     displayUserGroups();
 })
