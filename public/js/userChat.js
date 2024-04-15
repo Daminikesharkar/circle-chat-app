@@ -11,7 +11,7 @@ const messageContainer = document.getElementById("messageContainer");
 const messageInput = document.querySelector(".message_input");
 const sendButton = document.querySelector(".send_button");
 
-function addMessage(chat) {
+function addMessage(chat,isImage) {
     const chatElement = document.createElement("div");
 
     if (chat.isCurrentUser) {
@@ -19,12 +19,22 @@ function addMessage(chat) {
     } else {
         chatElement.classList.add("message-left");
     }
-    const messageContent = `
-        <div class="username">${chat.username}</div>
-        <div class="chat">${chat.message}</div>
-        <div class="created-at">${chat.createdAt}</div>
-    `;
-    chatElement.innerHTML = messageContent;
+
+    if(isImage){
+        const messageContent = `
+            <div class="username">${chat.username}</div>
+            <div class="chat"><a href="${chat.message}" target="_blank"><img src="${chat.message}" class="chat-image"></a></div>
+            <div class="created-at">${chat.createdAt}</div>
+        `;
+        chatElement.innerHTML = messageContent;
+    }else{
+        const messageContent = `
+            <div class="username">${chat.username}</div>
+            <div class="chat">${chat.message}</div>
+            <div class="created-at">${chat.createdAt}</div>
+        `;
+        chatElement.innerHTML = messageContent;
+    }
 
     messageContainer.insertBefore(chatElement, messageContainer.firstChild);
     messageContainer.scrollTop = messageContainer.scrollHeight;
@@ -44,14 +54,53 @@ sendButton.addEventListener('click',()=>{
     socket.emit('new-group-message', groupId);
 })
 
+const fileUploadIcon = document.getElementById('fileUploadIcon');
+const fileInput = document.getElementById('fileInput');
+
+fileUploadIcon.addEventListener('click', () => {
+    fileInput.click(); 
+});
+
+fileInput.addEventListener('change', handleFileSelect);
+
+function handleFileSelect(event) {
+    const messageInputBox = document.querySelector('.message_input_container'); 
+    const groupId = messageInputBox.dataset.groupId;
+
+    if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append('image', file);
+        formData.append('groupId', groupId);
+
+        postImage(formData);
+        fileInput.value = '';
+    }
+
+    socket.emit('new-group-message', groupId);
+}
+
+async function postImage(formData){
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.post('/postImage',formData,{headers:{"Authorization":token}});
+        addMessage(response.data.chat,true);
+    } catch (error) {
+        console.error("Error adding chats", error.message);
+    }
+}
 async function postMessage(chatData){
     try {
         const token = localStorage.getItem('token');
         const response = await axios.post('/postMessage',chatData,{headers:{"Authorization":token}});
-        addMessage(response.data.chat);
+        addMessage(response.data.chat,false);
     } catch (error) {
         console.error("Error adding chats", error.message);
     }
+}
+function isImageURL(url) {
+    const imageExtensions = /\.(jpg|jpeg|png|gif|bmp)$/i;
+    return imageExtensions.test(url);
 }
 
 async function displayChats(groupId){
@@ -63,7 +112,7 @@ async function displayChats(groupId){
         const length = Object.keys(response.data.chats).length;
         for(let i=0;i<length;i++){
             const chat = response.data.chats[i];
-            addMessage(chat);
+            addMessage(chat,isImageURL(chat.message));
         }
 
     } catch (error) {

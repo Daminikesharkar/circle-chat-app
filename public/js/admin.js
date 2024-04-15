@@ -3,7 +3,6 @@ const groupNameElement = document.getElementById('groupNameHeading');
 const groupMembersList = document.getElementById('groupMembers');
 const closeButton = document.getElementById('close-admin-popup');
 
-
 export function adminFunctionality(group){
     console.log(group);
     const groupName = group.name; 

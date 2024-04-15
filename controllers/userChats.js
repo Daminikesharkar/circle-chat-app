@@ -3,6 +3,7 @@ const Users = require('../models/user');
 const Group = require('../models/group');
 const Members = require('../models/member');
 const { Op } = require('sequelize');
+const awsService = require('../services/awsservice');
 
 exports.getUserChatPage = (req, res) => {
     res.sendFile('userChat.html', { root: 'views' });
@@ -14,6 +15,46 @@ exports.saveChats = async (req,res)=>{
     try {
         const chat = await Chats.create({
             message:message,
+            userId:user.id,
+            groupId:groupId
+       })
+       const responseObj = {
+            message: chat.message,
+            createdAt: chat.createdAt,
+            userId: chat.userId,
+            username: user.username,
+            isCurrentUser:true
+        };
+
+        return res.status(200).json({ 
+            message: "Message saved" ,
+            chat:responseObj
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            error: 'Internal Server Error'
+        }); 
+    }
+}
+
+exports.saveImageChat = async (req,res)=>{
+    const image = req.file;
+    const { groupId } = req.body;
+
+    console.log('Received image:', image);
+    console.log('Received groupId:', groupId);
+    const user = req.user;
+
+    try {
+        console.log('in',image,groupId);
+        const filename = `chat-images/group${groupId}/user${user.id}/${Date.now()}_${image.originalname}`;
+        console.log(filename);
+        const imageUrl = await awsService.uploadToS3(image.buffer, filename);
+        console.log(imageUrl);
+
+        const chat = await Chats.create({
+            message:imageUrl,
             userId:user.id,
             groupId:groupId
        })
