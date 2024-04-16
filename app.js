@@ -15,6 +15,9 @@ const Members = require('./models/member');
 const mainroutes = require('./routes/main');
 const userChatsroutes = require('./routes/userChats');
 
+const cron = require('./services/cronjob');
+cron.job.start();
+
 const app = express();
 
 app.use(cors({
