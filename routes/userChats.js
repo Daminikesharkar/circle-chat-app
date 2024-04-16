@@ -11,6 +11,11 @@ router.post('/postMessage',authentication.authenticate,userChatsController.saveC
 router.post('/postImage',authentication.authenticate,upload.single('image'),userChatsController.saveImageChat);
 router.get('/getMessages',authentication.authenticate,userChatsController.getChats);
 router.get('/getAllUsers',authentication.authenticate,userChatsController.getUsers);
+router.get('/getGroupUsers',authentication.authenticate,userChatsController.getGroupUsers);
+router.get('/getRemainingUsers',authentication.authenticate,userChatsController.getRemainingUsers);
+router.post('/makeAdmin',authentication.authenticate,userChatsController.makeAdmin);
+router.post('/updateGroup',authentication.authenticate,userChatsController.updateGroup);
+router.post('/removeUserFromGroup',authentication.authenticate,userChatsController.removeUserFromGroup);
 
 router.post('/createGroup',authentication.authenticate,userChatsController.createGroup);
 router.get('/getUserGroups',authentication.authenticate,userChatsController.getUserGroups);

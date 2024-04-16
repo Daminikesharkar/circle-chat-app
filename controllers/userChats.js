@@ -41,17 +41,11 @@ exports.saveChats = async (req,res)=>{
 exports.saveImageChat = async (req,res)=>{
     const image = req.file;
     const { groupId } = req.body;
-
-    console.log('Received image:', image);
-    console.log('Received groupId:', groupId);
     const user = req.user;
 
     try {
-        console.log('in',image,groupId);
         const filename = `chat-images/group${groupId}/user${user.id}/${Date.now()}_${image.originalname}`;
-        console.log(filename);
         const imageUrl = await awsService.uploadToS3(image.buffer, filename);
-        console.log(imageUrl);
 
         const chat = await Chats.create({
             message:imageUrl,
@@ -157,20 +151,17 @@ exports.getUsers = async (req,res)=>{
 exports.createGroup = async (req,res)=>{
     const user = req.user;
     const {groupname,userIds} = req.body;
-    console.log('in11');
     try {
         
         const group = await Group.create({name:groupname});
-        console.log('in1');
         //making current user as a admin of a group
         await Members.create({
             admin: true,
             userId: user.id,
             groupId: group.id,
         });
-        console.log('in2');
         await group.addUsers(userIds);
-        console.log('in3');
+
         res.status(200).json({
             message: 'Group created successfully',
             group: group,
@@ -187,9 +178,8 @@ exports.getUserGroups = async(req,res)=>{
     const user = req.user
 
     try {   
-        console.log('in'); 
         const groupIds = await Members.findAll({
-            where: { UserId: user.id },
+            where: { userId: user.id },
             attributes: ['groupId']
         });
         const ids = groupIds.map(({ groupId }) => groupId);
@@ -224,6 +214,132 @@ exports.checkAdmin = async (req,res)=>{
         });        
         res.status(200).json({ isAdmin: !!isAdmin });  
               
+    } catch (error) {
+        res.status(500).json({
+            error: 'Internal Server Error'
+        });
+    }
+}
+exports.makeAdmin = async(req,res)=>{
+
+    const {userId,groupId}=req.body;
+    console.log(userId,groupId);
+    try {
+        console.log('inside');
+        await Members.update(
+            { admin: true }, 
+            { where: { userId: userId, groupId: groupId } } 
+        );
+        console.log('done');
+        return res.status(200).json({ message: 'admin' });
+
+    } catch (error) {
+        res.status(500).json({
+            error: 'Internal Server Error'
+        });
+    }
+}
+exports.getGroupUsers = async (req,res)=>{
+    const { groupId } = req.query;
+    const user = req.user; 
+    try {
+        const memberUserIds = await Members.findAll({
+            where: { groupId: groupId },
+            attributes: ['userId']
+        });
+
+        const userIds = memberUserIds.map(member => member.userId);
+        const groupUsers = await Users.findAll({
+            where: {
+                id: { 
+                    [Op.in]: userIds,
+                    [Op.ne]: user.id  
+                } 
+            },
+            attributes: ['id', 'username']
+        });
+
+        const users = groupUsers.map(user => {
+            return {
+                userId: user.id,
+                username: user.username,
+            };
+        });
+        return res.status(200).json({
+            message: 'Chats fetched successfully',
+            users: users
+        });
+        
+    } catch (error) {
+        res.status(500).json({
+            error: 'Internal Server Error'
+        });
+    }
+}
+exports.getRemainingUsers = async (req,res)=>{
+    const { groupId } = req.query;
+    const user = req.user; 
+    
+    try {
+        const memberUserIds = await Members.findAll({
+            where: { groupId: groupId },
+            attributes: ['userId']
+        });
+
+        const userIds = memberUserIds.map(member => member.userId);
+
+        const remainingUsers = await Users.findAll({
+            where: {
+                id: { 
+                    [Op.notIn]: userIds,
+                    [Op.ne]: user.id  
+                } 
+            },
+            attributes: ['id', 'username']
+        });
+
+        const users = remainingUsers.map(user => {
+            return {
+                userId: user.id,
+                username: user.username,
+            };
+        });
+
+        return res.status(200).json({
+            message: 'Chats fetched successfully',
+            users: users
+        });
+    } catch (error) {
+        res.status(500).json({
+            error: 'Internal Server Error'
+        });
+    }
+}
+
+exports.removeUserFromGroup = async (req,res)=>{
+    const { groupId, userId } = req.body;
+
+    try {
+        const member = await Member.findOne({ where: { groupId, userId } });
+        await member.destroy();
+
+        return res.status(200).json({ message: 'User removed from the group successfully' });
+        
+    } catch (error) {
+        res.status(500).json({
+            error: 'Internal Server Error'
+        });
+    }
+}
+exports.updateGroup = async (req,res)=>{
+    const { groupId, groupMembers } = req.body;
+
+    try {
+        const group = await Group.findByPk(groupId, { include: Members });
+        await group.addUsers(groupMembers);
+
+        return res.status(200).json({ message: 'Group updated successfully' });
+        
     } catch (error) {
         res.status(500).json({
             error: 'Internal Server Error'

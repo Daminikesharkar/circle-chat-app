@@ -45,8 +45,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 io.on('connection', (socket) => {
-    console.log('A socket(client) connected');
-
+    
     socket.on('new-group-message', (groupId)=> {
         socket.broadcast.emit('group-message',groupId);
     });
