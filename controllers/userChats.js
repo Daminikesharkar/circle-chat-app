@@ -317,14 +317,13 @@ exports.getRemainingUsers = async (req,res)=>{
 }
 
 exports.removeUserFromGroup = async (req,res)=>{
-    const { groupId, userId } = req.body;
-
+    const { userId,groupId } = req.body;
     try {
-        const member = await Member.findOne({ where: { groupId, userId } });
+        const member = await Members.findOne({ where: { groupId, userId } });
         await member.destroy();
 
         return res.status(200).json({ message: 'User removed from the group successfully' });
-        
+
     } catch (error) {
         res.status(500).json({
             error: 'Internal Server Error'
@@ -333,9 +332,8 @@ exports.removeUserFromGroup = async (req,res)=>{
 }
 exports.updateGroup = async (req,res)=>{
     const { groupId, groupMembers } = req.body;
-
     try {
-        const group = await Group.findByPk(groupId, { include: Members });
+        const group = await Group.findOne({ where: { id:groupId } });
         await group.addUsers(groupMembers);
 
         return res.status(200).json({ message: 'Group updated successfully' });

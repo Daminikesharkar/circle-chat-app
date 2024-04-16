@@ -15,7 +15,7 @@ export async function adminFunctionality(group){
         const remainingUsersResponse = await axios.get(`/getRemainingUsers?groupId=${group.id}`,{headers:{"Authorization":token}});
         const remainingUsers = remainingUsersResponse.data.users;
 
-        groupNameElement.innerHTML = `Group: ${group.name}`;
+        groupNameElement.innerHTML = `Group Name: ${group.name}`;
         groupMembersList.innerHTML = groupMembers.map(member => `<li data-user=${JSON.stringify(member)}>${member.username} <button class="group-remove-btn">Remove</button> <button class="make-admin-btn">Make Admin</button></li>`).join('');    
         remainingUsersList.innerHTML = remainingUsers.map(user => `<li data-user=${JSON.stringify(user)}>${user.username} <button class="add-btn">Add</button></li>`).join('');
 
@@ -107,6 +107,7 @@ async function updateGroup(groupMembers,group){
         const token = localStorage.getItem('token');
         const response = await axios.post('/updateGroup',data,{headers:{"Authorization":token}});
         alert(response.data.message);
+        newlyAddedUsersList.innerHTML = '';
 
     } catch (error) {
         console.error("Error updating group", error.message);

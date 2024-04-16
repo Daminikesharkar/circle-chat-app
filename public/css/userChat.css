@@ -287,7 +287,7 @@ body {
   border-radius: 5px;
   position: relative;
   transform: translate(-50%, -50%);
-  top: 30%;
+  top: 35%;
   left: 50%;
   color: #704264;
 }
@@ -330,7 +330,7 @@ body {
   cursor: pointer;
   transition: background-color 0.3s;
 }
-.create-group-btn {
+.create-group-btn, #updateButton {
   margin-top: 20px;
   padding: 10px 20px;
   background-color: #704264;
@@ -365,7 +365,29 @@ body {
   background-color: #704264; 
   border-radius: 10px; 
 } 
-
+.group-info {
+  margin-bottom: 30px;
+}
+.group-info label {
+  font-weight: bold;
+}
+ul {
+  list-style-type: none;
+  padding-bottom: 20px;
+  padding-top: 20px;
+}
+ul li {
+  margin-bottom: 10px;
+}
+ul li button {
+  padding: 5px 10px;
+  background-color: #704264;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
 @media screen and (max-width: 768px) {
   .message_input_container {
     bottom: 80px;
